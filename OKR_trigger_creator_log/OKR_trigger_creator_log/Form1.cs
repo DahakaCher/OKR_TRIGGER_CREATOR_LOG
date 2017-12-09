@@ -61,7 +61,7 @@ namespace OKR_trigger_creator_log
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
                 
-                for (int i = 0; i < dt.Rows.Count; i++) comboBox1.Items.Add(dt.Rows[i].ItemArray[0].ToString());
+                for (int i = 0; i < dt.Rows.Count; i++) if (dt.Rows[i].ItemArray[0].ToString() != "sysdiagrams" ) comboBox1.Items.Add(dt.Rows[i].ItemArray[0].ToString());
                 comboBox1.SelectedIndex = 0;
             }
             catch (Exception ex)
@@ -119,6 +119,39 @@ namespace OKR_trigger_creator_log
         {
             Form_Update tmp_form = new Form_Update();
             tmp_form.Run_Insert(conn_data, comboBox1.Items[comboBox1.SelectedIndex].ToString());
+            Select_Table(comboBox1.SelectedIndex);
+        }
+
+      public void func_delete()
+        {
+            SqlCommand cmd = DB_connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+
+            cmd.CommandText = "DELETE FROM " + comboBox1.Items[comboBox1.SelectedIndex].ToString() + " WHERE " + dataGridView1.Columns[0].HeaderText + " = " + dataGridView1.SelectedRows[0].Cells[0].Value.ToString();
+            try
+            {
+
+                DialogResult res = MessageBox.Show("DELETE selected raw ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (res == DialogResult.Yes) cmd.ExecuteNonQuery();
+                // cmd.ExecuteNonQuery();   
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка запиту (" + ex.Message + ") : " + cmd.CommandText);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Form_Update tmp_form = new Form_Update();
+            tmp_form.Run_Update(conn_data, comboBox1.Items[comboBox1.SelectedIndex].ToString(), Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value));
+            Select_Table(comboBox1.SelectedIndex);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            func_delete();
             Select_Table(comboBox1.SelectedIndex);
         }
     }

@@ -21,6 +21,7 @@ namespace OKR_trigger_creator_log
 
         Connection_DB_Data data;
         String table_name;
+        int ID;
         SqlConnection DB_connection;
         List<TextBox> L_textBox;
         List<Label> L_names, L_types;
@@ -67,6 +68,12 @@ namespace OKR_trigger_creator_log
             this.Close();
         }
 
+        private void button1_Click_upd(object sender, EventArgs e)
+        {
+            func_update();
+            this.Close();
+        }
+
         public bool Run(Connection_DB_Data DBcondata)
         {
             data = DBcondata;
@@ -79,10 +86,70 @@ namespace OKR_trigger_creator_log
             this.button1.Click += new System.EventHandler(this.button1_Click_ins);
             data = DBcondata;
             table_name = tbl_n;
+            ID = -1;
             Connect_DB();
             Form_Creating();
             this.ShowDialog();
             return true;
+        }
+
+        public bool Run_Update(Connection_DB_Data DBcondata, String tbl_n, int id)
+        {
+            this.button1.Click += new System.EventHandler(this.button1_Click_upd);
+            data = DBcondata;
+            table_name = tbl_n;
+            ID = id;
+            Connect_DB();
+            Form_Creating();
+            Fill_textBox();
+            this.ShowDialog();
+            return true;
+        }
+
+        public void func_update()
+        {
+            SqlCommand cmd = DB_connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+
+            cmd.CommandText = "UPDATE " + table_name + " SET ";
+            for (int i = 1; i < L_names.Count; i++) if (i == 1) cmd.CommandText += L_names[i].Text + " = '" + L_textBox[i].Text+ "'"; else cmd.CommandText += " ," + L_names[i].Text + " = " + L_textBox[i].Text;
+            cmd.CommandText += " WHERE " + L_names[0].Text + " = " + ID.ToString();
+           
+           
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка запиту (" + ex.Message + ") : " + cmd.CommandText);
+            }
+        }
+
+        public void Fill_textBox()
+        {
+            DataTable dt = new DataTable();
+            SqlCommand cmd = DB_connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+
+            cmd.CommandText = "SELECT * FROM "+table_name+" WHERE "+ L_names[0].Text + " = " + ID.ToString();
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);   
+
+                for (int i = 0; i < dt.Rows[0].ItemArray.Length; i++) L_textBox[i].Text = dt.Rows[0].ItemArray[i].ToString();             
+
+                L_textBox[0].ReadOnly = true;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка запиту (" + ex.Message + ") : " + cmd.CommandText);
+            }
         }
 
         public void Form_Creating()
@@ -138,6 +205,11 @@ namespace OKR_trigger_creator_log
             {
                 MessageBox.Show("Помилка запиту (" + ex.Message + ") : " + cmd.CommandText);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void Form_Update_Load(object sender, EventArgs e)
