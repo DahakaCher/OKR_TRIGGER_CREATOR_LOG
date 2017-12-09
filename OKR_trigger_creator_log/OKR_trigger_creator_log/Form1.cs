@@ -114,5 +114,12 @@ namespace OKR_trigger_creator_log
         {
             Select_Table(comboBox1.SelectedIndex);
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Form_Update tmp_form = new Form_Update();
+            tmp_form.Run_Insert(conn_data, comboBox1.Items[comboBox1.SelectedIndex].ToString());
+            Select_Table(comboBox1.SelectedIndex);
+        }
     }
 }
