@@ -71,6 +71,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(300, 29);
             this.textBox4.TabIndex = 0;
+            this.textBox4.UseSystemPasswordChar = true;
             // 
             // label1
             // 
@@ -151,6 +152,7 @@
             this.Controls.Add(this.textBox1);
             this.Name = "Form_DB_connect";
             this.Text = "Form_DB_connect";
+            this.Load += new System.EventHandler(this.Form_DB_connect_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

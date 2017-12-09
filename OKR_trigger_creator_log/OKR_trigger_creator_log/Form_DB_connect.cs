@@ -67,5 +67,13 @@ namespace OKR_trigger_creator_log
                 MessageBox.Show("Connection error");
             }
         }
+
+        private void Form_DB_connect_Load(object sender, EventArgs e)
+        {
+            textBox1.Text= "DESKTOP-F3VVB4J\\SQLEXPRESS";
+            textBox2.Text = "ARMY";
+            textBox3.Text = "Alva";
+            textBox4.Text = "test";
+        }
     }
 }
