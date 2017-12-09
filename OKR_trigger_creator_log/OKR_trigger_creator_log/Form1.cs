@@ -37,6 +37,8 @@ namespace OKR_trigger_creator_log
             {
                 DB_connection = new SqlConnection(conn_data.Get_Connection_String());
                 DB_connection.Open();
+                Triggering trig = new Triggering(conn_data);
+
              //   MessageBox.Show("Sucsessfully connected");
             }
             catch
@@ -153,6 +155,11 @@ namespace OKR_trigger_creator_log
         {
             func_delete();
             Select_Table(comboBox1.SelectedIndex);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
