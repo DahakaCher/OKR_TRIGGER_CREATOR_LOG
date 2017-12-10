@@ -85,6 +85,7 @@ namespace OKR_trigger_creator_log
         {
             this.button1.Click += new System.EventHandler(this.button1_Click_ins);
             data = DBcondata;
+            this.Text = "Insert data";
             table_name = tbl_n;
             ID = -1;
             Connect_DB();
@@ -97,6 +98,7 @@ namespace OKR_trigger_creator_log
         {
             this.button1.Click += new System.EventHandler(this.button1_Click_upd);
             data = DBcondata;
+            this.Text = "Uodate data";
             table_name = tbl_n;
             ID = id;
             Connect_DB();

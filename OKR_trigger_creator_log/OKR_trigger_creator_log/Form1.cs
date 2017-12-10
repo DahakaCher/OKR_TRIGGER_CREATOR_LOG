@@ -19,6 +19,7 @@ namespace OKR_trigger_creator_log
         
 
         SqlConnection DB_connection;
+        Triggering trig;
 
         public Form1()
         {
@@ -37,7 +38,7 @@ namespace OKR_trigger_creator_log
             {
                 DB_connection = new SqlConnection(conn_data.Get_Connection_String());
                 DB_connection.Open();
-                Triggering trig = new Triggering(conn_data);
+                trig = new Triggering(conn_data);
 
              //   MessageBox.Show("Sucsessfully connected");
             }
@@ -160,6 +161,22 @@ namespace OKR_trigger_creator_log
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        public void not_log_table_view(bool status)
+        {
+
+            button2.Enabled = status;
+            button3.Enabled = status;
+            button4.Enabled = status;
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Select_Table(comboBox1.SelectedIndex);
+
+            if (comboBox1.Items[comboBox1.SelectedIndex].ToString() == trig.LOG_Table_name) not_log_table_view(false); else not_log_table_view(true);
         }
     }
 }

@@ -58,7 +58,7 @@ namespace OKR_trigger_creator_log
     {
         private Connection_DB_Data conn_data;
         SqlConnection DB_connection;
-        String LOG_Table_name;
+        public String LOG_Table_name;
         String INSERT_tr_name;
         String UPDATE_tr_name;
         String DELETE_tr_name;
@@ -141,7 +141,7 @@ namespace OKR_trigger_creator_log
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
 
-                for (int i = 0; i < dt.Rows.Count; i++) if (dt.Rows[i].ItemArray[0].ToString() != "sysdiagrams" || dt.Rows[i].ItemArray[0].ToString() != LOG_Table_name) names.Add(dt.Rows[i].ItemArray[0].ToString());
+                for (int i = 0; i < dt.Rows.Count; i++) if (dt.Rows[i].ItemArray[0].ToString() != "sysdiagrams" && dt.Rows[i].ItemArray[0].ToString() != LOG_Table_name) names.Add(dt.Rows[i].ItemArray[0].ToString());
                 
             }
             catch (Exception ex)
