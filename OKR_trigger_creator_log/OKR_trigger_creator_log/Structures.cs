@@ -150,7 +150,7 @@ namespace OKR_trigger_creator_log
                                     + "[Table_name] [nchar](100) NULL,"
                                     + "[DateTime] [date] NULL,"
                                     + "[Username] [nchar](100) NULL,"
-                                    + "[Information] [nchar](800) NULL, "
+                                    + "[Acted_ID] [int] NULL, "
                                     + "CONSTRAINT[PK_"+ LOG_Table_name +"] PRIMARY KEY CLUSTERED ("
                                      + "[ID_LOG] ASC"
                                         + ")WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]"
@@ -252,8 +252,8 @@ namespace OKR_trigger_creator_log
                         {
                             cmd1.CommandText = "CREATE TRIGGER [dbo].[" + INSERT_tr_name+"_"+names[i] + "] "
                                                 + "ON [dbo].[" + names[i] + "] AFTER INSERT AS "
-                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username], [Information]) "
-                                                + "VALUES ('INSERT', '" + names[i] + "', GETDATE(), SUSER_NAME(),'Inserted ID = ' +LTRIM(STR((SELECT ID_" + names[i] + " FROM inserted))))";
+                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username], [Acted_ID]) "
+                                                + "VALUES ('INSERT', '" + names[i] + "', GETDATE(), SUSER_NAME(), (SELECT ID_" + names[i] + " FROM inserted))";
                                                 
                             cmd1.ExecuteNonQuery();
                         }
@@ -264,8 +264,8 @@ namespace OKR_trigger_creator_log
                         {
                             cmd1.CommandText = "CREATE TRIGGER [dbo].[" + UPDATE_tr_name+"_" + names[i] + "] "
                                                 + "ON [dbo].[" + names[i] + "] AFTER UPDATE AS "
-                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username], [Information]) "
-                                                + "VALUES ('UPDATE', '" + names[i] + "', GETDATE(), SUSER_NAME(), 'Update ID = ' +LTRIM(STR((SELECT ID_" + names[i] + " FROM inserted))))  ";
+                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username], [Acted_ID]) "
+                                                + "VALUES ('UPDATE', '" + names[i] + "', GETDATE(), SUSER_NAME(), (SELECT ID_" + names[i] + " FROM inserted))  ";
                                                
                             cmd1.ExecuteNonQuery();
                         }
@@ -276,8 +276,8 @@ namespace OKR_trigger_creator_log
                         {
                             cmd1.CommandText = "CREATE TRIGGER [dbo].[" + DELETE_tr_name+"_" + names[i] + "] "
                                                 + "ON [dbo].[" + names[i] + "] AFTER DELETE AS "
-                                                + "INSERT INTO [dbo].["+LOG_Table_name+"] ([Action], [Table_name], [DateTime], [Username], [Information]) "
-                                                + "VALUES ('DELETE', '" + names[i] + "', GETDATE(), SUSER_NAME(), 'Deleted ID = ' +LTRIM(STR((SELECT ID_"+names[i]+" FROM deleted)))) ";
+                                                + "INSERT INTO [dbo].["+LOG_Table_name+"] ([Action], [Table_name], [DateTime], [Username], [Acted_ID]) "
+                                                + "VALUES ('DELETE', '" + names[i] + "', GETDATE(), SUSER_NAME(), (SELECT ID_"+names[i]+" FROM deleted)) ";
                                                
                             cmd1.ExecuteNonQuery();
                         }
