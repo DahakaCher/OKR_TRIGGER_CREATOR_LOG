@@ -111,6 +111,7 @@ namespace OKR_trigger_creator_log
                                     + "[Table_name] [nchar](100) NULL,"
                                     + "[DateTime] [date] NULL,"
                                     + "[Username] [nchar](100) NULL,"
+                                    + "[Information] [nchar](800) NULL, "
                                     + "CONSTRAINT[PK_"+ LOG_Table_name +"] PRIMARY KEY CLUSTERED ("
                                      + "[ID_LOG] ASC"
                                         + ")WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]"
@@ -150,6 +151,42 @@ namespace OKR_trigger_creator_log
             }
 
         }
+
+        public List<String> Get_Column_Names(String TableName )
+        {
+           List<String> cols = new List<String>();
+
+            DataTable dt = new DataTable();
+            SqlCommand cmd = DB_connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+
+            cmd.CommandText = "SELECT COLUMN_NAME  FROM information_schema.columns WHERE TABLE_NAME = '"+TableName+"'";
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+
+                for (int i = 0; i < dt.Rows.Count; i++) cols.Add(dt.Rows[i].ItemArray[0].ToString());
+                return cols;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка запиту (" + ex.Message + ") : " + cmd.CommandText);
+                return null;
+            }
+
+        }
+
+        public String create_info_text()
+        {
+            String tmp = "";
+
+
+            return tmp;
+        }
+
 
         private void Create_Triggers()
         {
@@ -200,8 +237,8 @@ namespace OKR_trigger_creator_log
                         {
                             cmd1.CommandText = "CREATE TRIGGER [dbo].[" + DELETE_tr_name+"_" + names[i] + "] "
                                                 + "ON [dbo].[" + names[i] + "] AFTER DELETE AS "
-                                                + "INSERT INTO [dbo].["+LOG_Table_name+"] ([Action], [Table_name], [DateTime], [Username]) "
-                                                + "VALUES ('DELETE', '" + names[i] + "', GETDATE(), SUSER_NAME()) ";
+                                                + "INSERT INTO [dbo].["+LOG_Table_name+"] ([Action], [Table_name], [DateTime], [Username], [Information]) "
+                                                + "VALUES ('DELETE', '" + names[i] + "', GETDATE(), SUSER_NAME(), 'Deleted ID = ' +LTRIM(STR((SELECT ID_"+names[i]+" FROM deleted)))) ";
                                                
                             cmd1.ExecuteNonQuery();
                         }
