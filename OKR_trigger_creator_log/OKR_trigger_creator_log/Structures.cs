@@ -23,6 +23,7 @@ namespace OKR_trigger_creator_log
         public String User_ID;
         public String Password;
         private String Connection_String;
+        public bool Reset;
 
         public Connection_DB_Data()
         {
@@ -31,6 +32,7 @@ namespace OKR_trigger_creator_log
             User_ID = "";
             Password = "";
             Create_Connection_String();
+            Reset = false;
 
         }
 
@@ -93,8 +95,45 @@ namespace OKR_trigger_creator_log
             }
         }
 
+        private void ResetTriggers()
+        {
+
+            Get_Table_Names();
+
+            DataTable dt = new DataTable();
+            SqlCommand cmd = DB_connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+
+            cmd.CommandText = "IF OBJECT_ID('"+LOG_Table_name+"', 'U') IS NOT NULL DROP TABLE " + LOG_Table_name;
+
+            try
+            {             
+                cmd.ExecuteNonQuery();
+
+                for (int i=0; i< names.Count; i++)
+                {
+                    cmd.CommandText = "IF OBJECT_ID ('" + DELETE_tr_name + "_" + names[i] + "', 'TR') IS NOT NULL DROP TRIGGER " + DELETE_tr_name + "_" + names[i];
+                    cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = "IF OBJECT_ID ('" + UPDATE_tr_name + "_" + names[i] + "', 'TR') IS NOT NULL DROP TRIGGER " + UPDATE_tr_name + "_" + names[i];
+                    cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = "IF OBJECT_ID ('" + INSERT_tr_name + "_" + names[i] + "', 'TR') IS NOT NULL DROP TRIGGER " + INSERT_tr_name + "_" + names[i];
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка запиту (" + ex.Message + ") : " + cmd.CommandText);
+            }
+        }
+
         private void Create_LOG_Table()
         {
+
+            if (conn_data.Reset) ResetTriggers();
+
             DataTable dt = new DataTable();
             SqlCommand cmd = DB_connection.CreateCommand();
             cmd.CommandType = CommandType.Text;
