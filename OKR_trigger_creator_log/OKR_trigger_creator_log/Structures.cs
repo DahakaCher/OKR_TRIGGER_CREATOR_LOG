@@ -23,6 +23,7 @@ namespace OKR_trigger_creator_log
         public String User_ID;
         public String Password;
         private String Connection_String;
+        public bool Reset;
 
         public Connection_DB_Data()
         {
@@ -31,6 +32,7 @@ namespace OKR_trigger_creator_log
             User_ID = "";
             Password = "";
             Create_Connection_String();
+            Reset = false;
 
         }
 
@@ -93,8 +95,45 @@ namespace OKR_trigger_creator_log
             }
         }
 
+        private void ResetTriggers()
+        {
+
+            Get_Table_Names();
+
+            DataTable dt = new DataTable();
+            SqlCommand cmd = DB_connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+
+            cmd.CommandText = "IF OBJECT_ID('"+LOG_Table_name+"', 'U') IS NOT NULL DROP TABLE " + LOG_Table_name;
+
+            try
+            {             
+                cmd.ExecuteNonQuery();
+
+                for (int i=0; i< names.Count; i++)
+                {
+                    cmd.CommandText = "IF OBJECT_ID ('" + DELETE_tr_name + "_" + names[i] + "', 'TR') IS NOT NULL DROP TRIGGER " + DELETE_tr_name + "_" + names[i];
+                    cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = "IF OBJECT_ID ('" + UPDATE_tr_name + "_" + names[i] + "', 'TR') IS NOT NULL DROP TRIGGER " + UPDATE_tr_name + "_" + names[i];
+                    cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = "IF OBJECT_ID ('" + INSERT_tr_name + "_" + names[i] + "', 'TR') IS NOT NULL DROP TRIGGER " + INSERT_tr_name + "_" + names[i];
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка запиту (" + ex.Message + ") : " + cmd.CommandText);
+            }
+        }
+
         private void Create_LOG_Table()
         {
+
+            if (conn_data.Reset) ResetTriggers();
+
             DataTable dt = new DataTable();
             SqlCommand cmd = DB_connection.CreateCommand();
             cmd.CommandType = CommandType.Text;
@@ -111,6 +150,7 @@ namespace OKR_trigger_creator_log
                                     + "[Table_name] [nchar](100) NULL,"
                                     + "[DateTime] [date] NULL,"
                                     + "[Username] [nchar](100) NULL,"
+                                    + "[Acted_ID] [int] NULL, "
                                     + "CONSTRAINT[PK_"+ LOG_Table_name +"] PRIMARY KEY CLUSTERED ("
                                      + "[ID_LOG] ASC"
                                         + ")WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]"
@@ -151,6 +191,42 @@ namespace OKR_trigger_creator_log
 
         }
 
+        public List<String> Get_Column_Names(String TableName )
+        {
+           List<String> cols = new List<String>();
+
+            DataTable dt = new DataTable();
+            SqlCommand cmd = DB_connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+
+            cmd.CommandText = "SELECT COLUMN_NAME  FROM information_schema.columns WHERE TABLE_NAME = '"+TableName+"'";
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+
+                for (int i = 0; i < dt.Rows.Count; i++) cols.Add(dt.Rows[i].ItemArray[0].ToString());
+                return cols;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка запиту (" + ex.Message + ") : " + cmd.CommandText);
+                return null;
+            }
+
+        }
+
+        public String create_info_text()
+        {
+            String tmp = "";
+
+
+            return tmp;
+        }
+
+
         private void Create_Triggers()
         {
             DataTable dt = new DataTable();
@@ -176,8 +252,8 @@ namespace OKR_trigger_creator_log
                         {
                             cmd1.CommandText = "CREATE TRIGGER [dbo].[" + INSERT_tr_name+"_"+names[i] + "] "
                                                 + "ON [dbo].[" + names[i] + "] AFTER INSERT AS "
-                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username]) "
-                                                + "VALUES ('INSERT', '" + names[i] + "', GETDATE(), SUSER_NAME()) ";
+                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username], [Acted_ID]) "
+                                                + "VALUES ('INSERT', '" + names[i] + "', GETDATE(), SUSER_NAME(), (SELECT ID_" + names[i] + " FROM inserted))";
                                                 
                             cmd1.ExecuteNonQuery();
                         }
@@ -188,8 +264,8 @@ namespace OKR_trigger_creator_log
                         {
                             cmd1.CommandText = "CREATE TRIGGER [dbo].[" + UPDATE_tr_name+"_" + names[i] + "] "
                                                 + "ON [dbo].[" + names[i] + "] AFTER UPDATE AS "
-                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username]) "
-                                                + "VALUES ('UPDATE', '" + names[i] + "', GETDATE(), SUSER_NAME()) ";
+                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username], [Acted_ID]) "
+                                                + "VALUES ('UPDATE', '" + names[i] + "', GETDATE(), SUSER_NAME(), (SELECT ID_" + names[i] + " FROM inserted))  ";
                                                
                             cmd1.ExecuteNonQuery();
                         }
@@ -200,8 +276,8 @@ namespace OKR_trigger_creator_log
                         {
                             cmd1.CommandText = "CREATE TRIGGER [dbo].[" + DELETE_tr_name+"_" + names[i] + "] "
                                                 + "ON [dbo].[" + names[i] + "] AFTER DELETE AS "
-                                                + "INSERT INTO [dbo].["+LOG_Table_name+"] ([Action], [Table_name], [DateTime], [Username]) "
-                                                + "VALUES ('DELETE', '" + names[i] + "', GETDATE(), SUSER_NAME()) ";
+                                                + "INSERT INTO [dbo].["+LOG_Table_name+"] ([Action], [Table_name], [DateTime], [Username], [Acted_ID]) "
+                                                + "VALUES ('DELETE', '" + names[i] + "', GETDATE(), SUSER_NAME(), (SELECT ID_"+names[i]+" FROM deleted)) ";
                                                
                             cmd1.ExecuteNonQuery();
                         }
