@@ -213,8 +213,8 @@ namespace OKR_trigger_creator_log
                         {
                             cmd1.CommandText = "CREATE TRIGGER [dbo].[" + INSERT_tr_name+"_"+names[i] + "] "
                                                 + "ON [dbo].[" + names[i] + "] AFTER INSERT AS "
-                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username]) "
-                                                + "VALUES ('INSERT', '" + names[i] + "', GETDATE(), SUSER_NAME()) ";
+                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username], [Information]) "
+                                                + "VALUES ('INSERT', '" + names[i] + "', GETDATE(), SUSER_NAME(),'Inserted ID = ' +LTRIM(STR((SELECT ID_" + names[i] + " FROM inserted))))";
                                                 
                             cmd1.ExecuteNonQuery();
                         }
@@ -225,8 +225,8 @@ namespace OKR_trigger_creator_log
                         {
                             cmd1.CommandText = "CREATE TRIGGER [dbo].[" + UPDATE_tr_name+"_" + names[i] + "] "
                                                 + "ON [dbo].[" + names[i] + "] AFTER UPDATE AS "
-                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username]) "
-                                                + "VALUES ('UPDATE', '" + names[i] + "', GETDATE(), SUSER_NAME()) ";
+                                                + "INSERT INTO [dbo].[" + LOG_Table_name + "] ([Action], [Table_name], [DateTime], [Username], [Information]) "
+                                                + "VALUES ('UPDATE', '" + names[i] + "', GETDATE(), SUSER_NAME(), 'Update ID = ' +LTRIM(STR((SELECT ID_" + names[i] + " FROM inserted))))  ";
                                                
                             cmd1.ExecuteNonQuery();
                         }
