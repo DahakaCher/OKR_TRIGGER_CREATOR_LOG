@@ -9,3 +9,6 @@ c:\users\dahaka\documents\visual studio 2015\Projects\OKR_trigger_creator_log\OK
 c:\users\dahaka\documents\visual studio 2015\Projects\OKR_trigger_creator_log\OKR_trigger_creator_log\obj\Debug\OKR_trigger_creator_log.csproj.GenerateResource.Cache
 c:\users\dahaka\documents\visual studio 2015\Projects\OKR_trigger_creator_log\OKR_trigger_creator_log\obj\Debug\OKR_trigger_creator_log.exe
 c:\users\dahaka\documents\visual studio 2015\Projects\OKR_trigger_creator_log\OKR_trigger_creator_log\obj\Debug\OKR_trigger_creator_log.pdb
+d:\Git\OKR_TRIGGER_CREATOR_LOG\OKR_trigger_creator_log\OKR_trigger_creator_log\bin\Debug\OKR_trigger_creator_log.exe.config
+d:\Git\OKR_TRIGGER_CREATOR_LOG\OKR_trigger_creator_log\OKR_trigger_creator_log\obj\Debug\OKR_trigger_creator_log.exe
+d:\Git\OKR_TRIGGER_CREATOR_LOG\OKR_trigger_creator_log\OKR_trigger_creator_log\obj\Debug\OKR_trigger_creator_log.pdb

@@ -51,6 +51,16 @@ namespace OKR_trigger_creator_log
 
         }
 
+        private bool is_Owner()
+        {
+            SqlCommand cmd = DB_connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+
+            cmd.CommandText = "SELECT IS_MEMBER ('db_owner');";
+            if (cmd.ExecuteScalar().ToString() == "0") return false;
+            return true;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             Read_Data();
@@ -59,13 +69,23 @@ namespace OKR_trigger_creator_log
 
                 DB_connection = new SqlConnection(data.Get_Connection_String());
                 DB_connection.Open();
-                MessageBox.Show("Sucsessfully connected");
+
+
+                if (is_Owner()) MessageBox.Show("Sucsessfully connected"); else MessageBox.Show("<!>: You have not enough rules for correct program work. There may be errors based on your permission level.");
                 this.Close();
             }
             catch
             {
                 MessageBox.Show("Connection error");
             }
+        }
+
+        private void Form_DB_connect_Load(object sender, EventArgs e)
+        {
+            textBox1.Text= "DESKTOP-F3VVB4J\\SQLEXPRESS";
+            textBox2.Text = "ARMY";
+            textBox3.Text = "Alva";
+            textBox4.Text = "test";
         }
     }
 }
