@@ -72,7 +72,6 @@ namespace OKR_trigger_creator_log
 
 
                 if (is_Owner()) MessageBox.Show("Sucsessfully connected"); else MessageBox.Show("<!>: You have not enough rules for correct program work. There may be errors based on your permission level.");
-                if (checkBox1.Checked) data.Reset = true;
                 this.Close();
             }
             catch

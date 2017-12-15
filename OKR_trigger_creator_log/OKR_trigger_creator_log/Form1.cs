@@ -105,7 +105,6 @@ namespace OKR_trigger_creator_log
                 conn_data = temp_form.Run();
                 Connect_DB();
                 Get_Table_Names();
-                toolStripStatusLabel1.Text = "Connected to : " + conn_data.Server_name + " Data Base : " + conn_data.DB_name + " as " + conn_data.User_ID; 
                 // MessageBox.Show(conn_data.Get_Connection_String());
             }
             catch
@@ -178,11 +177,6 @@ namespace OKR_trigger_creator_log
             Select_Table(comboBox1.SelectedIndex);
 
             if (comboBox1.Items[comboBox1.SelectedIndex].ToString() == trig.LOG_Table_name) not_log_table_view(false); else not_log_table_view(true);
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Done by Dahaka (c)");
         }
     }
 }
