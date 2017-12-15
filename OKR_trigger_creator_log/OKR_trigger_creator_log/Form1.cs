@@ -105,6 +105,7 @@ namespace OKR_trigger_creator_log
                 conn_data = temp_form.Run();
                 Connect_DB();
                 Get_Table_Names();
+                toolStripStatusLabel1.Text = "Conneccted to " + conn_data.Server_name + " Data Base - " + conn_data.DB_name + " as " + conn_data.User_ID;
                 // MessageBox.Show(conn_data.Get_Connection_String());
             }
             catch
